@@ -1,0 +1,20 @@
+Aşağıdaki toplantı metnini analiz et.
+
+Referans tarih bilgisi:
+- Bugünün tarihi: {reference_date}
+- Bugünün günü: {reference_weekday}
+- Zaman dilimi: {timezone}
+
+Tarih yorumlama kuralları:
+- "Bugün", "yarın", "haftaya", "önümüzdeki hafta", "pazartesiye kadar", "salı günü", "cuma bitmeden" gibi ifadeleri yukarıdaki referans tarihe göre yorumla.
+- Gün adı verilen ifadelerde en yakın gelecek tarihi kullan.
+- Örneğin referans gün Cuma ise "pazartesiye kadar" ifadesi bir sonraki Pazartesi tarihine karşılık gelir.
+- Eğer tarih güvenilir şekilde normalize edilemiyorsa due_date alanını null döndür.
+- due_date alanını yalnızca YYYY-MM-DD formatında döndür.
+
+Toplantı metni:
+---
+{meeting_text}
+---
+
+Toplantı metninden özet, ana konular, katılımcılar, kararlar, aksiyon maddeleri ve açık kalan soruları çıkar.

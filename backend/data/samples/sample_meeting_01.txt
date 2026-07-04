@@ -1,0 +1,19 @@
+Merve: Bugünkü toplantıda Meet Core projesinin ilk sprint kapsamını netleştirelim. Ben LLM entegrasyonu ve prompt engineering tarafını üstleneceğim.
+
+Berke: Ben metrikler ile ilgili araştırmayı yapacağım. Özellikle toplantı özetlerinin doğruluğunu nasıl ölçeceğimizi belirlememiz gerekiyor.
+
+Feyza: Temel frontend ekranını hazırlayacağım. Kullanıcı toplantı metnini girebilmeli ve analiz sonucunu ekranda görebilmeli.
+
+Ayşe: Test amaçlı birkaç örnek toplantı senaryosu hazırlayalım. Bunları ilk demo öncesinde kullanırız.
+
+Merve: LLM çıktısının JSON formatında dönmesi önemli. Frontend tarafı summary, decisions ve action_items alanlarını bekleyebilir.
+
+Berke: Sprint sonunda demo yapılmasına karar verdik. İlk demo için ses dosyası yükleme kapsam dışı kalsın, sadece metin üzerinden ilerleyelim.
+
+Feyza: Frontend taslağını 5 Temmuz'a kadar tamamlamayı hedefliyorum.
+
+Merve: Ben de Gemini API ile ilk LLM çağrısını yapıp prompt çıktısını kontrol edeceğim. Eğer JSON formatı bozulursa schema validation eklememiz gerekir.
+
+Ayşe: Açık kalan konu olarak risk skoru hesaplamasının ilk sprintte mi yoksa sonraki sprintte mi yapılacağı netleşmedi.
+
+Berke: Metrik araştırmasının ilk çıktısını pazartesiye kadar paylaşacağım.
