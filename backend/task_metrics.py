@@ -98,8 +98,7 @@ class TaskMetricsCalculator:
     def get_all_metrics(self, task_sentence: str, has_date_entity: bool = False, verb_count: int = 1) -> Dict[str, float]:
         """
         6. Tek Tuşla Tüm Sonuçları Alma (Ana Metod)
-        Merve, tüm metrikleri ayrı ayrı çağırmak yerine pipeline'dan sadece bu metodu çağırarak
-        bütün analiz sonuçlarını tek bir sözlük (dictionary) objesi olarak alabilir.
+      
         """
         return {
             "ambiguity_score": round(self.calculate_ambiguity_score(task_sentence), 2),
