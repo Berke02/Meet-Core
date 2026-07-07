@@ -1,0 +1,23 @@
+## Sprint 1 Sonu Beklentileri
+
+**1. Backlog Dağıtma Mantığı:**
+Sprint 1 kapsamında görev dağılımı, takım üyelerinin uzmanlık alanları ve projenin modüler mimarisi (Çapraz Fonksiyonlu/Cross-Functional takım prensibi) gözetilerek yapılmıştır. Product Backlog üzerinden çekilen işler; Veri Bilimi (ASR ve Speaker Diarization), Yapay Zeka & Backend (LLM API Entegrasyonu ve Agent mimarisi) ve Frontend (Temel Kullanıcı Arayüzü) departmanlarına ayrılarak Developer'lara atanmış, süreç Product Owner ve Scrum Master takibiyle Trello üzerinden yönetilmiştir.
+
+**2. Daily Scrum Notları:**
+Takım üyelerinin günlük ilerlemeleri, karşılaştıkları engelleyici durumlar (blockers) ve alınan kararlar şeffaf bir şekilde kayıt altına alınmıştır.
+👉 [Sprint 1 Daily Scrum Notları İçin Tıklayınız](./Project_Management_File/Sprint_1/Sprint_1_Daily_Scrum.docx)
+
+**3. Sprint Board Updates:**
+Sprint boyunca görevlerin durumunu (To Do, Doing, Done) şeffafça takip ettiğimiz Trello panomuzun güncel ekran görüntüleri projeye eklenmiştir.
+👉 [Sprint Board Ekran Görüntüleri İçin Tıklayınız](./Project_Management_File/Sprint_1/Sprint_Board_ss)
+
+**4. Ürün Durumu (Kanıtlar):**
+İlk sprintin MVP hedefleri doğrultusunda geliştirilen Frontend arayüz taslağına, Backend loglarına ve ASR (Sesten Metne Çeviri) notebook çıktılarına ait kanıtlar belgelenmiştir.
+
+**5. Sprint Review:**
+İlk sprintte Meet Core projesi için nelerin hedeflendiği, nelerin tamamlandığı ve ortaya çıkan MVP parçasının (bağımsız modüller) değerlendirmesi aşağıdaki belgededir:
+👉 [Sprint 1 Review Belgesi İçin Tıklayınız](./Project_Management_File/Sprint_1/Sprint_1_Değerlendirme.md)
+
+**6. Sprint Retrospective:**
+Takım içi çalışma dinamiklerimizde neleri iyi yaptığımız (iletişim krizlerinin yönetimi), nerelerde zorlandığımız (silo halinde çalışma ve sürüm kontrol gecikmeleri) ve Sprint 2 için entegrasyon aksiyon planlarımız:
+👉 [Sprint 1 Retrospective Belgesi İçin Tıklayınız](./Project_Management_File/Sprint_1/Sprint_1_Retrospective.md)
