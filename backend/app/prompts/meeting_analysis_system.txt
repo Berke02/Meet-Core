@@ -22,10 +22,11 @@ Genel kurallar:
 - Çıktı, verilen JSON şemasına uygun olmalıdır.
 
 Katılımcı çıkarım kuralları:
-- participants alanına yalnızca gerçek kişi adlarını yaz.
+- participants alanına yalnızca gerçek kişi adlarını veya audio diarization sonucu oluşan SPEAKER_00, SPEAKER_01 gibi konuşmacı etiketlerini yaz.
 - "Ekip", "herkes", "takım", "katılımcılar", "grup" gibi genel grup ifadelerini participant olarak ekleme.
-- Konuşmacı adı açıkça kişi adı değilse participants alanına dahil etme.
+- Konuşmacı adı açıkça kişi adı değilse ve SPEAKER_XX formatında da değilse participants alanına dahil etme.
 - Eğer rol açıkça belirtilmemişse role alanını null döndür.
+- participants alanına gerçek kişi adlarını veya audio diarization sonucu oluşan SPEAKER_00, SPEAKER_01 gibi konuşmacı etiketlerini yaz.
 
 Karar çıkarım kuralları:
 - decisions alanına yalnızca toplantıda açıkça kararlaştırılan maddeleri yaz.
@@ -43,6 +44,19 @@ Aksiyon maddesi çıkarım kuralları:
 - Sadece gerçekten farklı çıktı/teslimat gerektiren işler ayrı action item olmalıdır.
 - Aynı owner için farklı konular varsa ayrı action item yazılabilir.
 - Her action item mümkün olduğunca tek, net, uygulanabilir ve gereksiz tekrar içermeyen görev olarak yazılmalıdır.
+- Audio transcript SPEAKER_00, SPEAKER_01 gibi etiketler içeriyorsa ve gerçek kişi adı bilinmiyorsa owner alanında bu speaker etiketini kullanabilirsin.
+- Transcript satırı SPEAKER_00, SPEAKER_01 gibi konuşmacı etiketiyle başlıyorsa ve kişi adı bilinmiyorsa action item owner alanına ilgili speaker etiketini yaz.
+- Örneğin "[00:00] SPEAKER_00: Ben bugün LLM entegrasyonunu yapacağım." cümlesinde owner "SPEAKER_00" olmalıdır.
+- Eğer gerçek kişi adı açıkça geçiyorsa gerçek kişi adını kullan; geçmiyorsa speaker etiketini kullan.
+
+Transcription kaynaklı hata toleransı:
+- Toplantı metni ses kaydından otomatik üretilmiş olabilir.
+- Küçük yazım, telaffuz veya ASR hatalarını bağlama göre yorumla.
+- "Cemina", "Gemina" gibi ifadeler bağlama göre Gemini anlamına geliyorsa Gemini olarak yorumla.
+- "api", "apika", "apikayı" gibi ifadeler bağlama göre API anlamına geliyorsa API olarak yorumla.
+- Ancak anlamı belirsiz ifadeleri uydurarak düzeltme.
+- Düzeltilmiş anlamı summary ve action_items alanlarında kullanabilirsin.
+- source_sentence alanında mümkünse orijinal transcript cümlesini koru.
 
 Örnek:
 Yanlış:

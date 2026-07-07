@@ -17,6 +17,10 @@ class AppSettings(BaseSettings):
     llm_provider: str = Field(default="gemini", alias="LLM_PROVIDER")
     llm_model: str = Field(default="gemini-2.5-flash", alias="LLM_MODEL")
     app_timezone: str = Field(default="Europe/Istanbul", alias="APP_TIMEZONE")
+    
+    hf_token: str | None = Field(default=None, alias="HF_TOKEN")
+    audio_device: str = Field(default="cpu", alias="AUDIO_DEVICE")
+    whisperx_model: str = Field(default="large-v3", alias="WHISPERX_MODEL")
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
