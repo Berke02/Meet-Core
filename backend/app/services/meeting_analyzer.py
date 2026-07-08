@@ -7,8 +7,9 @@ from zoneinfo import ZoneInfo
 from pydantic import ValidationError
 
 from app.core.config import PROJECT_ROOT, AppSettings
-from app.schemas.meeting_schema import MeetingAnalysisResult
+from app.schemas.meeting_schema import MeetingAnalysisResult, TaskMetrics
 from app.services.gemini_client import GeminiClient
+from app.services.task_metrics import TaskMetricsCalculator
 
 
 SYSTEM_PROMPT_PATH = PROJECT_ROOT / "app" / "prompts" / "meeting_analysis_system.txt"
@@ -77,11 +78,27 @@ class MeetingAnalyzer:
         )
 
         try:
-            return MeetingAnalysisResult.model_validate(raw_result)
+            result = MeetingAnalysisResult.model_validate(raw_result)
         except ValidationError as exc:
             raise MeetingAnalyzerError(
                 "LLM response is valid JSON but does not match MeetingAnalysisResult schema."
             ) from exc
+
+        # Metrik hesaplamaları
+        metrics_calculator = TaskMetricsCalculator()
+        for item in result.action_items:
+            # İşlem metni olarak source_sentence'ı önceliklendir, yoksa task'ı kullan
+            task_text = item.source_sentence if item.source_sentence else item.task
+            has_date = bool(item.due_date)
+            
+            metrics_dict = metrics_calculator.get_all_metrics(
+                task_sentence=task_text,
+                has_date_entity=has_date,
+                verb_count=1
+            )
+            item.metrics = TaskMetrics(**metrics_dict)
+
+        return result
 
     def _build_prompt(self, meeting_text: str) -> str:
         system_prompt = read_text_file(SYSTEM_PROMPT_PATH)

@@ -45,6 +45,24 @@ class Decision(BaseModel):
     )
 
 
+class TaskMetrics(BaseModel):
+    """Metrics associated with a task/action item."""
+
+    ambiguity_score: float = Field(
+        default=0.0,
+        description="Score indicating how ambiguous the task is (0-100).",
+    )
+    urgency_score: float = Field(
+        default=0.0,
+        description="Score indicating the urgency of the task (0-100).",
+    )
+    action_density_score: float = Field(
+        default=0.0,
+        description="Score indicating the density of action verbs (0-100).",
+    )
+
+
+
 class ActionItem(BaseModel):
     """Action item extracted from the meeting."""
 
@@ -77,6 +95,10 @@ class ActionItem(BaseModel):
     source_sentence: str | None = Field(
         default=None,
         description="Original sentence or excerpt supporting this action item.",
+    )
+    metrics: TaskMetrics | None = Field(
+        default=None,
+        description="Calculated task metrics.",
     )
 
 
