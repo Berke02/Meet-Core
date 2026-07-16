@@ -8,7 +8,6 @@ st.set_page_config(page_title="Meet Core", page_icon="🎙️", layout="wide")
 # 2. YAN MENÜ VE SAYFA YÖNLENDİRMESİ
 with st.sidebar:
     st.header("📌 Menü")
-    # Sayfalar arası geçiş için buton yerine 'radio' (seçenek) kullanıyoruz
     secilen_sayfa = st.radio(
         "Sayfa Seçin:", 
         ["Yeni Toplantı Analizi", "Risk Dashboard", "Geçmiş Toplantılar"]
@@ -21,7 +20,7 @@ with st.sidebar:
 # ==========================================
 if secilen_sayfa == "Yeni Toplantı Analizi":
     st.title("🎙️ Meet Core: Yeni Toplantı Analizi")
-    st.markdown("Toplantı ses kaydını yükleyin veya notları yapıştırın.")
+    st.markdown("Toplantı ses kaydını yükleyin veya notları yapıştırın. Yapay zeka ajanları sizin için aksiyonları ve riskleri çıkarsın.")
     st.divider()
 
     col1, col2 = st.columns(2)
@@ -73,7 +72,7 @@ if secilen_sayfa == "Yeni Toplantı Analizi":
 # ==========================================
 elif secilen_sayfa == "Risk Dashboard":
     st.title("📊 Risk ve Takip Dashboard'u")
-    st.markdown("Tüm toplantılardaki görevlerin takım bazlı risk analizi.")
+    st.markdown("Tüm toplantılardaki görevlerin takım bazlı risk analizi ve verimlilik metrikleri.")
     st.divider()
 
     # Örnek Grafik Verileri
@@ -86,16 +85,58 @@ elif secilen_sayfa == "Risk Dashboard":
     col_grafik1, col_grafik2 = st.columns(2)
 
     with col_grafik1:
-        st.subheader("Kişi Bazlı Toplam Görev Dağılımı")
+        st.subheader("👤 Kişi Bazlı Toplam Görev Dağılımı")
         st.bar_chart(risk_data["Açık Görev Sayısı"])
 
     with col_grafik2:
         st.subheader("⚠️ Yüksek Riskli Görevler (Acil)")
-        st.bar_chart(risk_data["Yüksek Riskli Görev"], color="#ff2b2b") # Kırmızı renkli grafik
+        st.bar_chart(risk_data["Yüksek Riskli Görev"], color="#ff2b2b") # Kırmızı grafik
 
 # ==========================================
-# SAYFA 3: GEÇMİŞ TOPLANTILAR (Hazırlık)
+# SAYFA 3: GEÇMİŞ TOPLANTILAR
 # ==========================================
 elif secilen_sayfa == "Geçmiş Toplantılar":
     st.title("🗂️ Geçmiş Toplantılar Arşivi")
-    st.info("Bu sayfa yakında geçmiş toplantıların detaylı araması için tasarlanacak.")
+    st.markdown("Önceki toplantıların analizlerine, kararlarına ve görev listelerine buradan ulaşabilirsiniz.")
+    st.divider()
+
+    # Geçmiş toplantıların listesi (Arama için)
+    gecmis_toplantilar = {
+        "Haftalık Senkronizasyon (10.07.2026)": {
+            "tarih": "10.07.2026",
+            "ozet": "Haftalık ilerlemeler değerlendirildi. Backend ve ML modellerinin API süreçleri konuşuldu.",
+            "gorevler": [
+                {"Sorumlu": "Arda", "Görev": "Gecikme Risk Metriklerinin Optimize Edilmesi", "Durum": "Devam Ediyor"},
+                {"Sorumlu": "Meleksu", "Görev": "Agent Backlog Güncellemesi", "Durum": "Tamamlandı"}
+            ]
+        },
+        "Sprint Planlama Toplantısı (03.07.2026)": {
+            "tarih": "03.07.2026",
+            "ozet": "Bootcamp projesi için MVP kapsamı belirlendi. Görev dağılımları yapıldı.",
+            "gorevler": [
+                {"Sorumlu": "Feyza", "Görev": "Streamlit Arayüz Tasarımı", "Durum": "Tamamlandı"},
+                {"Sorumlu": "Merve", "Görev": "Prompt Yönetimi Altyapısı", "Durum": "Tamamlandı"}
+            ]
+        }
+    }
+
+    # Kullanıcının toplantı seçebileceği arama kutusu
+    secilen_toplantı_adi = st.selectbox(
+        "🔍 İncelemek istediğiniz toplantıyı seçin:", 
+        list(gecmis_toplantilar.keys())
+    )
+
+    if secilen_toplantı_adi:
+        veriler = gecmis_toplantilar[secilen_toplantı_adi]
+        
+        st.markdown(f"### 📅 Toplantı Tarihi: {veriler['tarih']}")
+        
+        # Detayları sekmelerle gösteriyoruz
+        t1, t2 = st.tabs(["📝 Toplantı Özeti", "📋 Alınan Kararlar & Görevler"])
+        
+        with t1:
+            st.info(veriler["ozet"])
+            
+        with t2:
+            st.write("**Bu Toplantıda Dağıtılan Görevler:**")
+            st.dataframe(pd.DataFrame(veriler["gorevler"]), use_container_width=True)
