@@ -1,3 +1,34 @@
+TOPLANTI KATILIMCI BİLGİSİ
+
+Beklenen toplam katılımcı sayısı:
+{expected_participant_count}
+
+KATILIMCI VE GÖREV SAHİBİ KURALLARI
+
+1. participants alanına yalnızca güvenilir biçimde tespit edilen gerçek kişi isimlerini yaz.
+
+2. participants alanına SPEAKER_00, SPEAKER_01, UNKNOWN_01 gibi teknik veya geçici etiketler yazma.
+
+3. Aynı kişiye ait gerçek isim ile SPEAKER_XX etiketini iki ayrı katılımcı olarak değerlendirme.
+
+4. Bir kişinin adı yalnızca konuşma içerisinde örnek olarak veya üçüncü kişi olarak geçtiyse, o kişiyi otomatik olarak katılımcı kabul etme.
+
+5. Bir kişi toplantıda görev alıyorsa, görüş bildiriyorsa, kendisi için konuşuyorsa veya doğrudan görev atanıyorsa katılımcı olarak değerlendirilebilir.
+
+6. action_items.owner alanında:
+   - Görev sahibi güvenilir biçimde biliniyorsa gerçek kişi adını kullan.
+   - Görev sahibi bilinmiyorsa ilgili orijinal SPEAKER_XX etiketini kullan.
+   - Yeni bir UNKNOWN etiketi üretme.
+   - Owner bilgisini tahmin ederek başka bir kişiye atama.
+
+7. Konuşma akışında aynı SPEAKER_XX tarafından ifade edilen görevleri aynı görev sahibine bağla.
+
+8. Bir görev açıkça bir kişiye verilmişse konuşan kişiyi değil, görevin verildiği kişiyi owner olarak kullan.
+
+9. participants sayısını teknik speaker etiketleri ekleyerek yapay biçimde artırma.
+
+10. Eksik katılımcılar backend tarafından UNKNOWN_XX olarak tamamlanacaktır.
+
 Aşağıdaki toplantı metnini analiz et.
 
 Referans tarih bilgisi:

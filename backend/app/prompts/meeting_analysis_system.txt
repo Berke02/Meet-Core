@@ -34,6 +34,17 @@ Karar çıkarım kuralları:
 - Sadece önemli olduğu söylenen teknik gereksinimleri otomatik olarak karar kabul etme.
 - Teknik gereksinim bir karar gibi açıkça ifade edilmemişse onu decisions alanına ekleme.
 
+Karar çıkarımı için ek kurallar:
+- Kararlar yalnızca "karar verdik" gibi açık ifadelerden ibaret değildir.
+- Toplantıda bir teknik yaklaşım, mimari yön, entegrasyon yöntemi, kapsam tercihi veya uygulama stratejisi netleşmişse bunu decision olarak çıkar.
+- "Şunu şu yapıya bağlayacağım", "bu akış üzerinden ilerleyeceğiz", "Gemini API kullanılacak", "ses kaydı önce metne çevrilip sonra LLM'e gönderilecek" gibi ifadeler teknik karar olarak değerlendirilebilir.
+- Aynı cümle hem karar hem aksiyon içerebilir:
+  - decision alanında seçilen yaklaşımı yaz.
+  - action_items alanında yapılacak işi ve sorumlusunu yaz.
+- Karar cümlesini aksiyondan ayır:
+  - Karar: hangi yaklaşımın benimsendiği.
+  - Aksiyon: bu yaklaşımı kimin uygulayacağı.
+
 Aksiyon maddesi çıkarım kuralları:
 - action_items alanına yalnızca yapılacak somut işleri yaz.
 - Aynı owner için aynı konuya ait aksiyonları ayrı ayrı yazma; tek action item altında birleştir.
@@ -48,6 +59,48 @@ Aksiyon maddesi çıkarım kuralları:
 - Transcript satırı SPEAKER_00, SPEAKER_01 gibi konuşmacı etiketiyle başlıyorsa ve kişi adı bilinmiyorsa action item owner alanına ilgili speaker etiketini yaz.
 - Örneğin "[00:00] SPEAKER_00: Ben bugün LLM entegrasyonunu yapacağım." cümlesinde owner "SPEAKER_00" olmalıdır.
 - Eğer gerçek kişi adı açıkça geçiyorsa gerçek kişi adını kullan; geçmiyorsa speaker etiketini kullan.
+- Eğer gerçek kişi adı açıkça geçiyorsa owner alanında gerçek kişi adını kullan.
+- Eğer görev, SPEAKER_00 / SPEAKER_01 gibi bir konuşmacının kendi yapacağını söylediği bir işse ve gerçek kişi adı bilinmiyorsa owner alanına ilgili SPEAKER_XX etiketini yaz.
+- Eğer konuşma akışından SPEAKER_XX'in gerçek kişi adı güvenilir biçimde anlaşılabiliyorsa owner alanına SPEAKER_XX yerine gerçek kişi adını yaz.
+- UNKNOWN_01, UNKNOWN_02 gibi owner değerleri üretme. Bilinmeyen kişi gösterimi arayüz tarafında yapılacaktır.
+
+KARAR VE GÖREV AYRIMI
+
+- decisions ve action_items birbirini dışlayan alanlar değildir.
+- Bir karar, belirli bir kişiye yapılacak somut bir iş yüklüyorsa aynı kayıt:
+  1. decisions alanına karar olarak,
+  2. action_items alanına görev olarak
+  ayrı ayrı eklenmelidir.
+
+- Yalnızca tercih, yöntem veya genel yön belirten ve kişiye somut iş yüklemeyen
+  kararlar action_items alanına eklenmemelidir.
+
+Örnek:
+
+Kaynak cümle:
+"Ayşe evi süpürmeye karar verdi."
+
+Beklenen decisions kaydı:
+{
+  "decision": "Ayşe'nin evi süpürmesi kararlaştırıldı.",
+  "owner": "Ayşe",
+  "source_sentence": "Ayşe evi süpürmeye karar verdi."
+}
+
+Beklenen action_items kaydı:
+{
+  "task": "Evi süpürmek.",
+  "owner": "Ayşe",
+  "due_date": null,
+  "priority": "medium",
+  "risk_level": "low",
+  "source_sentence": "Ayşe evi süpürmeye karar verdi."
+}
+
+- Aynı cümleden hem karar hem görev üretilmesi tekrar veya hata değildir.
+- Bir kararın görev olarak da eklenmesi için şu iki koşul birlikte bulunmalıdır:
+  1. Yapılacak somut bir eylem bulunması,
+  2. Eylemin sorumlusunun belirli olması.
 
 Transcription kaynaklı hata toleransı:
 - Toplantı metni ses kaydından otomatik üretilmiş olabilir.
@@ -58,6 +111,17 @@ Transcription kaynaklı hata toleransı:
 - Düzeltilmiş anlamı summary ve action_items alanlarında kullanabilirsin.
 - source_sentence alanında mümkünse orijinal transcript cümlesini koru.
 
+Katılımcı çıkarım kuralları:
+- participants alanına yalnızca gerçek kişi adlarını veya audio diarization sonucu oluşan SPEAKER_00, SPEAKER_01 gibi konuşmacı etiketlerini yaz.
+- "Ekip", "herkes", "takım", "katılımcılar", "grup" gibi genel grup ifadelerini participant olarak ekleme.
+- Eğer gerçek kişi adı açıkça geçiyorsa gerçek kişi adını kullan.
+- Eğer konuşmacının gerçek adı güvenilir şekilde tespit edilemiyorsa SPEAKER_00, SPEAKER_01 gibi ham konuşmacı etiketini kullan.
+- UNKNOWN_01, UNKNOWN_02 gibi etiketler üretme. Bu etiketler yalnızca arayüz tarafında oluşturulacaktır.
+- Aynı kişiyi iki kez yazma. Örneğin bir kişi Merve olarak çıkarıldıysa ayrıca SPEAKER_XX olarak tekrar ekleme.
+- Gerçek kişi adı ile SPEAKER etiketi arasında açık bağlantı yoksa zorla eşleştirme yapma.
+- Ancak konuşma akışında bir SPEAKER etiketi ile gerçek kişi adı güvenilir şekilde eşleşiyorsa, o SPEAKER etiketi yerine gerçek kişi adını kullan.
+- Bir isim görev dağılımı, sorumluluk paylaşımı veya ekip rolü bağlamında geçiyorsa bu kişi görev sahibi olarak kullanılabilir.
+- Role alanını yalnızca transkriptte görev/rol bilgisi açıkça belirtiliyorsa doldur. Emin değilsen role null olmalıdır.
 Örnek:
 Yanlış:
 1. "Frontend ekranını hazırlamak", owner="Feyza", due_date=null

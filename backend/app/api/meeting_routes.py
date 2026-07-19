@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from app.core.config import get_settings
 from app.schemas.meeting_schema import MeetingAnalysisResult
 from app.services.meeting_analyzer import MeetingAnalyzer, MeetingAnalyzerError
@@ -20,6 +20,13 @@ class MeetingAnalysisRequest(BaseModel):
         description="Meeting transcript or meeting notes to analyze.",
     )
 
+    participant_count: int = Field(
+        ...,
+        ge=1,
+        le=50,
+        description="Toplantıya katılan toplam kişi sayısı.",
+    )
+
 class AudioMeetingAnalysisResponse(BaseModel):
     transcript_text: str = Field(
         ...,
@@ -31,18 +38,29 @@ class AudioMeetingAnalysisResponse(BaseModel):
     )
 
 @router.post("/analyze", response_model=MeetingAnalysisResult)
-def analyze_meeting(request: MeetingAnalysisRequest) -> MeetingAnalysisResult:
+def analyze_meeting(
+    request: MeetingAnalysisRequest,
+) -> MeetingAnalysisResult:
     try:
         settings = get_settings()
         analyzer = MeetingAnalyzer(settings=settings)
 
-        return analyzer.analyze(request.meeting_text)
+        return analyzer.analyze(
+            meeting_text=request.meeting_text,
+            expected_participant_count=request.participant_count,
+        )
 
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        ) from exc
 
     except MeetingAnalyzerError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=502,
+            detail=str(exc),
+        ) from exc
 
     except Exception as exc:
         raise HTTPException(
@@ -53,6 +71,12 @@ def analyze_meeting(request: MeetingAnalysisRequest) -> MeetingAnalysisResult:
 @router.post("/analyze-audio", response_model=AudioMeetingAnalysisResponse)
 async def analyze_audio_meeting(
     file: UploadFile = File(...),
+    participant_count: int = Form(
+        ...,
+        ge=1,
+        le=50,
+        description="Toplantıya katılan toplam kişi sayısı.",
+    ),
 ) -> AudioMeetingAnalysisResponse:
     allowed_extensions = {".wav", ".mp3", ".m4a", ".mp4", ".webm"}
 
@@ -75,11 +99,16 @@ async def analyze_audio_meeting(
         from app.services.transcription_service import WhisperXTranscriptionService
 
         transcription_service = WhisperXTranscriptionService(settings=settings)
-        transcript_text = transcription_service.transcribe(temp_path)
+        transcript_text = transcription_service.transcribe(
+            audio_path=temp_path,
+            expected_speaker_count=participant_count,
+        )
 
         analyzer = MeetingAnalyzer(settings=settings)
-        analysis = analyzer.analyze(transcript_text)
-
+        analysis = analyzer.analyze(
+            meeting_text=transcript_text,
+            expected_participant_count=participant_count,
+        )
         return AudioMeetingAnalysisResponse(
             transcript_text=transcript_text,
             analysis=analysis,

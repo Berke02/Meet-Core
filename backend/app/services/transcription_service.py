@@ -21,26 +21,37 @@ class WhisperXTranscriptionService:
     def __init__(self, settings: AppSettings) -> None:
         self._settings = settings
 
-    def transcribe(self, audio_path: Path) -> str:
+    def transcribe(
+        self,
+        audio_path: Path,
+        expected_speaker_count: int | None = None,
+    ) -> str:
         if not audio_path.exists():
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
         if audio_path.stat().st_size == 0:
             raise ValueError(f"Audio file is empty: {audio_path}")
 
+        if expected_speaker_count is not None and expected_speaker_count < 1:
+            raise ValueError("Expected speaker count must be at least 1.")
+
         try:
-            return self._transcribe_with_whisperx(audio_path)
-        except ImportError as exc:
-            raise TranscriptionServiceError(
-                "WhisperX dependencies are not installed. "
-                "Install them with: pip install -r requirements-audio.txt"
-            ) from exc
+            return self._transcribe_with_whisperx(
+                audio_path=audio_path,
+                expected_speaker_count=expected_speaker_count,
+            )
+        except TranscriptionServiceError:
+            raise
         except Exception as exc:
             raise TranscriptionServiceError(
-                f"Audio transcription failed: {exc}"
+                f"Audio transcription failed for '{audio_path.name}': {exc}"
             ) from exc
 
-    def _transcribe_with_whisperx(self, audio_path: Path) -> str:
+    def _transcribe_with_whisperx(
+        self,
+        audio_path: Path,
+        expected_speaker_count: int | None = None,
+    ) -> str:
         import torch
         import whisperx
 
@@ -80,6 +91,7 @@ class WhisperXTranscriptionService:
                     result=aligned_result,
                     audio_path=audio_path,
                     device=device,
+                    expected_speaker_count=expected_speaker_count,
                 )
             except Exception as exc:
                 # Diarization is useful but should not break the MVP audio flow.
@@ -122,6 +134,7 @@ class WhisperXTranscriptionService:
         result: dict[str, Any],
         audio_path: Path,
         device: str,
+        expected_speaker_count: int | None = None,
     ) -> dict[str, Any]:
         import pandas as pd
         from pyannote.audio import Pipeline
@@ -144,7 +157,13 @@ class WhisperXTranscriptionService:
 
         pipeline.to(torch.device(device))
 
-        diarization = pipeline(str(audio_path))
+        if expected_speaker_count is not None:
+            diarization = pipeline(
+                str(audio_path),
+                num_speakers=expected_speaker_count,
+            )
+        else:
+            diarization = pipeline(str(audio_path))
 
         diarize_segments: list[dict[str, Any]] = []
 
