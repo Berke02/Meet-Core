@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+*.log
+.git/
+.gitignore
+Recording_to_Text_Model/
+data/
+scripts/
